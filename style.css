@@ -1,0 +1,82 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Unica One", sans-serif;
+}
+
+body {
+  height: 100vh;
+  background-color: #e4e4e1;
+  background-image: radial-gradient(
+      at top center,
+      rgba(255, 255, 255, 0.03) 0%,
+      rgba(0, 0, 0, 0.03) 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(143, 152, 157, 0.6) 100%
+    );
+  background-blend-mode: normal, multiply;
+}
+
+.nav {
+  background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
+  height: 8vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #d4d4d4;
+}
+
+dialog {
+  padding: 30px;
+  border: none;
+  border-radius: 15px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+form {
+  display: grid;
+  grid-template: repeat(2, 1fr) / repeat(2, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+form > button {
+  grid-column: 1/3;
+  justify-self: center;
+}
+
+.button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  background-image: linear-gradient(
+    to right,
+    #141e30 0%,
+    #243b55 51%,
+    #141e30 100%
+  );
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+  box-shadow: 0 0 20px #eee;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-position: right center;
+  color: #fff;
+  text-decoration: none;
+}
+
+input {
+    border: none;
+    border-bottom: 1px solid black;
+}
