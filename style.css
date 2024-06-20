@@ -77,6 +77,32 @@ form > button {
 }
 
 input {
-    border: none;
-    border-bottom: 1px solid black;
+  border: none;
+  border-bottom: 1px solid black;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#gameBoard {
+  width: 400px;
+  height: 400px;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+
+#gameBoard > .row {
+  background-image: linear-gradient(to right, #ffffff 0%, #FFFFFF  51%, #ECE9E9  100%);
+  margin: 4px;
+  border-radius: 9px;
+  font-size: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
 }
