@@ -4,14 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe Exp.1</title>
+    <title>Tic-Tac-Toe</title>
+
+    <link rel="icon" type="image/x-icon" href="favicon.PNG">
 
     <link rel="stylesheet" href="style.css">
     <script defer src="app.js"></script>
 
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=IBM+Plex+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Unica+One&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=IBM+Plex+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Unica+One&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
@@ -25,8 +31,8 @@
     <div class="nav">Tic-Tac-Toe</div>
     <div class="container">
         <div class="user-names">
-            <span class="one"><span id="display-player-one"> </span>- <span>2</span></span>
-            <span class="two"><span id="display-player-two"> </span>- <span>5</span></span>
+            <div><span id="display-player-one"> </span> - <span id="p1-points"></span></div>
+            <div><span id="display-player-two"> </span> - <span id="p2-points"></span></div>
         </div>
         <div id="gameBoard">
             <div class="row"></div>
@@ -40,6 +46,9 @@
             <div class="row"></div>
         </div>
     </div>
+    <button class="footer">
+        <i class="uil uil-github-alt"></i> smg02
+    </button>
 </body>
 
 </html>

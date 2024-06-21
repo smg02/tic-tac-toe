@@ -18,16 +18,26 @@ body {
       rgba(143, 152, 157, 0.6) 100%
     );
   background-blend-mode: normal, multiply;
+  display: grid;
+  grid-template-rows: 1fr 9fr 0.5fr;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
 .nav {
   background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
-  height: 8vh;
-  display: flex;
+  display: grid;
   justify-content: center;
   align-items: center;
-  font-size: 1.5rem;
+  grid-template-rows: 1fr;
+  font-size: 1.4rem;
   font-weight: bold;
+  border-radius: 2rem;
+  margin: 1rem;
+  padding: 1.5rem;
   color: #d4d4d4;
 }
 
@@ -84,20 +94,18 @@ input {
 .container {
   display: flex;
   flex-direction: column;
-  height: 70vh;
+  justify-content: center;
   align-items: center;
-  justify-content: space-around;
+  gap: 2rem;
 }
 
 #gameBoard {
-  width: 400px;
-  height: 400px;
   display: grid;
-  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  grid-template: repeat(3, 6rem) / repeat(3, 6rem);
 }
 
 #gameBoard > .row {
-  background-image: linear-gradient(to right, #ffffff 0%, #FFFFFF  51%, #ECE9E9  100%);
+  background-image: linear-gradient(to right, #ffffff 0%, #ECE9E9  51%, #ECE9E9  100%);
   margin: 4px;
   border-radius: 9px;
   font-size: 5rem;
@@ -105,4 +113,45 @@ input {
   justify-content: center;
   align-items: center;
   font-weight: bold;
+  transition: 300ms;
+}
+
+.row:hover {
+  scale: 1.1;
+  border: 1px solid #141e30;
+}
+
+#p1-points,
+#p2-points {
+  font-weight: bolder;
+  font-size: larger;
+}
+
+.user-names {
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.winner {
+  font-size: 3rem;
+  font-weight: 600;
+  color: #29323c;
+}
+
+.winner::before {
+  content: "--";
+}
+
+.winner::after {
+  content: "--";
+}
+
+.footer {
+  justify-self: center;
+  background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
+  border-radius: 2rem;
+  margin: 1rem;
+  padding: 1.5rem 5rem;
+  color: #d4d4d4;
+  cursor: pointer;
 }

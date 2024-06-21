@@ -1,168 +1,152 @@
-const dialog = document.querySelector("dialog");
-const closeDialog = document.querySelector("#submit");
+document.addEventListener("DOMContentLoaded", () => {
+    const dialogElement = document.querySelector("dialog");
+    const submitButton = document.querySelector("#submit");
 
-// displaying username
-const container = document.querySelector(".container");
-const displayerPlayerOne = document.querySelector("#display-player-one");
-const displayerPlayerTwo = document.querySelector("#display-player-two");
+    // Displaying username and points
+    const containerElement = document.querySelector(".container");
+    const playerOneDisplay = document.querySelector("#display-player-one");
+    const playerTwoDisplay = document.querySelector("#display-player-two");
 
-const winnerDiv = document.createElement("div");
+    const playerOnePointsDisplay = document.querySelector("#p1-points");
+    const playerTwoPointsDisplay = document.querySelector("#p2-points");
 
-let p1, p2;
-let gameFlow; // Declare gameFlow globally
+    const winnerMessage = document.createElement("div");
+    winnerMessage.className = "winner";
 
-dialog.showModal()
+    const github = document.querySelector(".footer");
+    github.addEventListener("click", () => window.location.href = "https://github.com/smg02")
 
-closeDialog.addEventListener("click", (e) => {
-    if (document.querySelector("#player-one-name").value === '') {
-        return 0;
-    } else if (document.querySelector("#player-two-name").value === '') {
-        return 0;
-    } else {
+    let gameController;
+
+    dialogElement.showModal();
+
+    submitButton.addEventListener("click", (e) => {
+        const playerOneNameInput = document.querySelector("#player-one-name").value;
+        const playerTwoNameInput = document.querySelector("#player-two-name").value;
+
+        if (playerOneNameInput === '' || playerTwoNameInput === '') {
+            return;
+        }
+
         e.preventDefault();
-        dialog.close();
-        p1 = player(document.querySelector('#player-one-name').value, 'X');
-        p2 = player(document.querySelector('#player-two-name').value, 'Y');
+        dialogElement.close();
 
+        const playerOne = createPlayer(playerOneNameInput, 'x');
+        const playerTwo = createPlayer(playerTwoNameInput, 'y');
 
-        displayerPlayerOne.textContent = p1.getPlayerName();
-        displayerPlayerTwo.textContent = p2.getPlayerName();
+        playerOnePointsDisplay.textContent = playerOne.getPoints();
+        playerTwoPointsDisplay.textContent = playerTwo.getPoints();
 
-        // Initialize gameFlow after players are set
-        gameFlow = (() => {
-            const gb = GameBoard;
+        playerOneDisplay.textContent = playerOne.getName();
+        playerTwoDisplay.textContent = playerTwo.getName();
 
-            const players = [
-                {
-                    name: p1.getPlayerName(),
-                    marker: p1.getPlayerMarker()
-                },
-                {
-                    name: p2.getPlayerName(),
-                    marker: p2.getPlayerMarker()
+        // Initialize gameController after players are set
+        gameController = createGameController(playerOne, playerTwo);
+    });
+
+    const gameBoardModule = (() => {
+        const boardCells = document.querySelectorAll(".row");
+        let boardState = Array(9).fill(null);
+        let gameWon = false;
+
+        boardCells.forEach((cell, index) => {
+            cell.dataset.id = index;
+            cell.addEventListener("click", () => {
+                if (gameController && !gameWon && !cell.textContent) {
+                    cell.textContent = gameController.getCurrentPlayer().getMarker();
+                    gameController.handleMove(index);
                 }
+            });
+        });
+
+        const resetBoard = () => {
+            gameWon = false;
+            boardState.fill(null);
+            boardCells.forEach((cell) => {
+                cell.textContent = '';
+            });
+        };
+
+        const placeMarker = (index, marker) => {
+            if (!boardState[index]) {
+                boardState[index] = marker;
+            }
+        };
+
+        const checkWinner = () => {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                [0, 4, 8], [2, 4, 6]             // diagonals
             ];
 
-            let currentPlayer = players[0];
-
-            const switchCurrentPlayer = () => {
-                if (currentPlayer === players[0]) {
-                    currentPlayer = players[1]
-                } else {
-                    currentPlayer = players[0]
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+                    gameWon = true;
+                    return true;
                 }
             }
 
-            const getCurrentPlayer = () => currentPlayer;
-            console.log(`${getCurrentPlayer().marker}'s turn`);
-
-            console.log(gb.getGameBoard());
-
-            const playRound = (value) => {
-                gb.placeMarker(value, getCurrentPlayer().marker);
-                console.log(gb.getGameBoard());
-                if (gb.getSpotInfo() === true) {
-                    console.log(`${getCurrentPlayer().name}'s turn`);
-                } else {
-                    gb.checkWinner()
-                    switchCurrentPlayer();
-                    if (gb.getWinnerStat() === false) console.log(`${getCurrentPlayer().name}'s turn`);
-                }
+            if (boardState.every(cell => cell)) {
+                return 'draw';
             }
-            return { getCurrentPlayer, playRound }
-        })();
-    }
-}, false);
 
-const GameBoard = (function () {
-    const gridBoard = document.querySelectorAll(".row");
+            return false;
+        };
 
-    gridBoard.forEach((element, index) => {
-        element.dataset.id = index;
-        element.addEventListener("click", (e) => {
-            e.target.textContent = gameFlow.getCurrentPlayer().marker;
-            gameFlow.playRound(index);
-        })
-    })
+        return { placeMarker, checkWinner, resetBoard };
+    })();
 
+    const createPlayer = (name, marker) => {
+        let points = 0;
 
-    let gameBoard = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-    let spotOccupied = false;
-    let wonYet = false;
+        return {
+            getName: () => name,
+            getMarker: () => marker,
+            getPoints: () => points,
+            incrementPoints: () => { points += 1; }
+        };
+    };
 
-    const getSpotInfo = () => spotOccupied;
-    const getWinnerStat = () => wonYet;
+    const createGameController = (playerOne, playerTwo) => {
+        const gameBoard = gameBoardModule;
+        const players = [playerOne, playerTwo];
+        let currentPlayer = players[0];
 
-    const getGameBoard = () => gameBoard;
+        const switchCurrentPlayer = () => {
+            currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
+        };
 
-    const placeMarker = (index, marker) => {
-        if (gameBoard[index] == 'X' || gameBoard[index] == 'Y') {
-            console.log("Occupied!");
-            spotOccupied = true;
-        } else {
-            gameBoard[index] = marker;
-            spotOccupied = false;
-        }
-    }
+        const getCurrentPlayer = () => currentPlayer;
 
-    const checkWinner = () => {
-        if ((gameBoard[0] === gameBoard[1] && gameBoard[1] === gameBoard[2]) ||
-            (gameBoard[3] === gameBoard[4] && gameBoard[4] === gameBoard[5]) ||
-            (gameBoard[6] === gameBoard[7] && gameBoard[7] === gameBoard[8])) {
-            console.log(`${gameFlow.getCurrentPlayer().name} wins`);
-            winnerDiv.textContent = `${gameFlow.getCurrentPlayer().name} wins`;
-            container.append(winnerDiv)
-            wonYet = true;
-            reset();
-        }
+        const handleMove = (index) => {
+            gameBoard.placeMarker(index, getCurrentPlayer().getMarker());
 
-        if ((gameBoard[0] === gameBoard[3] && gameBoard[3] === gameBoard[6]) ||
-            (gameBoard[1] === gameBoard[4] && gameBoard[4] === gameBoard[7]) ||
-            (gameBoard[2] === gameBoard[5] && gameBoard[5] === gameBoard[8])) {
-            console.log(`${gameFlow.getCurrentPlayer().name} wins`);
-            winnerDiv.textContent = `${gameFlow.getCurrentPlayer().name} wins`;
-            container.append(winnerDiv)
-            wonYet = true;
-            reset()
-        }
+            const winner = gameBoard.checkWinner();
+            if (winner) {
+                if (winner === 'draw') {
+                    winnerMessage.textContent = "Game Draw";
+                } else {
+                    winnerMessage.textContent = `${getCurrentPlayer().getName()} wins`;
+                    getCurrentPlayer().incrementPoints();
+                    updatePointsDisplay();
+                }
+                containerElement.appendChild(winnerMessage);
+                setTimeout(() => {
+                    winnerMessage.remove();
+                    gameBoard.resetBoard();
+                }, 2000);
+            } else {
+                switchCurrentPlayer();
+            }
+        };
 
-        if ((gameBoard[0] === gameBoard[4] && gameBoard[4] === gameBoard[8]) ||
-            (gameBoard[2] === gameBoard[4] && gameBoard[4] === gameBoard[6])) {
-            console.log(`${gameFlow.getCurrentPlayer().name} wins`);
-            winnerDiv.textContent = `${gameFlow.getCurrentPlayer().name} wins`;
-            container.append(winnerDiv)
-            wonYet = true;
-            reset()
-        }
+        const updatePointsDisplay = () => {
+            playerOnePointsDisplay.textContent = playerOne.getPoints();
+            playerTwoPointsDisplay.textContent = playerTwo.getPoints();
+        };
 
-        if ((gameBoard[0] === 'X' || gameBoard[0] === 'Y') && (gameBoard[1] === 'X' || gameBoard[1] ===  'Y') && (gameBoard[2] === 'X' || gameBoard[2] ===  'Y') && (gameBoard[3] === 'X' || gameBoard[3] ===  'Y') && (gameBoard[4] === 'X' || gameBoard[4] ===  'Y') && (gameBoard[5] === 'X' || gameBoard[5] ===  'Y') && (gameBoard[6] === 'X' || gameBoard[6] ===  'Y') && (gameBoard[7] === 'X' || gameBoard[7] ===  'Y') && (gameBoard[8] === 'X' || gameBoard[8] ===  'Y')) {
-            winnerDiv.textContent = `Game Draw`;
-            container.append(winnerDiv)
-            wonYet = true;
-            reset()
-        }
-    }
-
-    const reset = () => {
-        wonYet = false;
-        gameBoard = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-        gridBoard.forEach((element) => {
-            element.replaceChildren()
-        })
-    }
-    return { getGameBoard, placeMarker, getSpotInfo, checkWinner, getWinnerStat, reset }
-})();
-
-const player = (name, marker) => {
-
-    const getPlayerName = () => name;
-
-    let playerPoints;
-    const getPlayerPoints = () => playerPoints;
-
-    const getPlayerMarker = () => marker;
-
-    return { getPlayerName, getPlayerPoints, getPlayerMarker }
-}
-
-
+        return { getCurrentPlayer, handleMove };
+    };
+});
